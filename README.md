@@ -1,0 +1,1 @@
+# ons-vue-notice-component
