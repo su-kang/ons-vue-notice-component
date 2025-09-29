@@ -1,15 +1,11 @@
 <template>
 	<div>
 		<!-- Header Component -->
-		<header class="Header">
-			<!-- Button Component -->
-			<div class="header_left">
+		<Header title="게시판 등록">
+			<template #left>
 				<button class="btn btn-blue" @click="goBack">← 뒤로 가기</button>
-			</div>
-			<div class="header_center">게시판 등록</div>
-			<!-- Button Component -->
-			<div class="header_right"></div>
-		</header>
+			</template>
+		</Header>
 
 		<!-- NoticeRegist Component -->
 		<div class="regist">
@@ -65,15 +61,16 @@
 </template>
 
 <script setup lang="ts">
+import Header from '@/components/Header.vue';
 import { ICON_LIST } from '@/utils/Constants';
 import { onCreate } from '@/utils/localStorageUtil';
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 // Form state
-const input = ref({
+const input = reactive({
 	typeId: 1,
 	title: '',
 	createName: '',
@@ -84,16 +81,13 @@ const input = ref({
 
 // Methods
 const onClickItem = (item: any) => {
-	input.value = {
-		...input.value,
-		typeId: item.id,
-	};
+	input.typeId = item.id;
 };
 
 const onSubmit = () => {
 	// 등록 로직 (localStorage에 저장)
-	onCreate(input.value);
-	console.log('등록 데이터:', input.value);
+	onCreate(input);
+	console.log('등록 데이터:', input);
 
 	// 등록 후 리스트 페이지로 이동
 	router.push('/');

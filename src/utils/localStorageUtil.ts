@@ -44,31 +44,19 @@ export const localStorageUtils = {
  */
 export const onCreate = (data: any) => {
 	try {
-		const localData =
-			localStorageUtils.getItem('data') === null
-				? []
-				: localStorageUtils.getItem('data');
-
-		let maxId = 0;
-		localData.forEach((element: any) => {
-			if (element?.id > maxId) {
-				maxId = element?.id;
-			}
-		});
-		maxId++;
-
-		let result: any = [];
+		// 기존 데이터
+		const localData: any[] = localStorageUtils.getItem('data') || [];
+		// 가장 큰 id 값 + 1
+		const maxId =
+			localData.reduce((max, el) => Math.max(max, el?.id ?? 0), 0) + 1;
+		// 변경 데이터
 		const chgData = {
 			...data,
-			// id: localData.length, // 유니크 키
 			id: maxId, // 유니크 키
 			updateDate: dateUtils.getToDay('YYYY-MM-DD HH:mm:ss'), // 날짜
 		};
-		if (localData === null) {
-			result.push(chgData);
-		} else {
-			result = [...localData, chgData];
-		}
+		// localData는 null일 수 있으므로 기본값 [] 처리
+		const result = [...(localData || []), chgData];
 		// 로컬 스토리지 변경
 		localStorageUtils.setItem('data', result);
 	} catch (error) {
@@ -83,16 +71,13 @@ export const onCreate = (data: any) => {
  */
 export const onRead = (search: any) => {
 	try {
-		const localData =
-			localStorageUtils.getItem('data') === null
-				? []
-				: localStorageUtils.getItem('data');
+		const localData: any[] = localStorageUtils.getItem('data') || [];
+
+		// 정렬 후 title, createName 조건 검색
+		const sorted = sortArray(localData, 'updateDate', search.order);
+		const byTitle = searchByKoreanKeyword(sorted, 'title', search.title);
 		const result = searchByKoreanKeyword(
-			searchByKoreanKeyword(
-				sortArray(localData, 'updateDate', search.order),
-				'title',
-				search.title,
-			),
+			byTitle,
 			'createName',
 			search.createName,
 		);
@@ -111,16 +96,10 @@ export const onRead = (search: any) => {
  */
 export const onReadOne = (id: any) => {
 	try {
-		const localData =
-			localStorageUtils.getItem('data') === null
-				? []
-				: localStorageUtils.getItem('data');
-		const result = localData.find((item: any) => {
-			return item.id === Number(id);
-		});
-		return result;
+		const localData: any[] = localStorageUtils.getItem('data') || [];
+		return localData.find((item: any) => item.id === Number(id)) || null;
 	} catch (error) {
-		console.error('Error onRead localStorage', error);
+		console.error('Error onReadOne localStorage', error);
 	}
 	return;
 };
@@ -132,22 +111,21 @@ export const onReadOne = (id: any) => {
  */
 export const onUpdate = (newData: any) => {
 	try {
-		const localData =
-			localStorageUtils.getItem('data') === null
-				? []
-				: localStorageUtils.getItem('data');
+		const localData: any[] = localStorageUtils.getItem('data') || [];
+
 		const chgData = {
 			...newData,
-			updateDate: dateUtils.getToDay('YYYY-MM-DD HH:mm:ss'), // 날짜
+			updateDate: dateUtils.getToDay('YYYY-MM-DD HH:mm:ss'),
 		};
+
 		const result = localData.map((item: any) =>
 			item.id === chgData.id ? chgData : item,
 		);
-		// 로컬 스토리지 변경
+
 		localStorageUtils.setItem('data', result);
 		return result;
 	} catch (error) {
-		console.error('Error onRead localStorage', error);
+		console.error('Error onUpdate localStorage', error);
 	}
 	return;
 };
@@ -159,14 +137,10 @@ export const onUpdate = (newData: any) => {
  */
 export const onDelete = (id: any) => {
 	try {
-		const localData =
-			localStorageUtils.getItem('data') === null
-				? []
-				: localStorageUtils.getItem('data');
-		const result = localData.filter((item: any) => {
-			return item.id !== Number(id);
-		});
-		// 로컬 스토리지 변경
+		const localData: any[] = localStorageUtils.getItem('data') || [];
+
+		const result = localData.filter((item: any) => item.id !== Number(id));
+
 		localStorageUtils.setItem('data', result);
 		return result;
 	} catch (error) {

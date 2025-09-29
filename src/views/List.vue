@@ -1,17 +1,14 @@
 <template>
 	<div>
 		<!-- Header Component -->
-		<header class="Header">
-			<!-- Button Component -->
-			<div class="header_left"></div>
-			<div class="header_center">게시판 샘플 리스트</div>
-			<!-- Button Component -->
-			<div class="header_right">
+		<Header title="게시판 샘플 리스트">
+			<template #left></template>
+			<template #right>
 				<button class="btn btn-green" @click="navigateToRegist">
 					새글 등록
 				</button>
-			</div>
-		</header>
+			</template>
+		</Header>
 
 		<!-- NoticeList Component -->
 		<div class="notice">
@@ -65,16 +62,17 @@
 </template>
 
 <script setup lang="ts">
+import Header from '@/components/Header.vue';
 import { ICON_LIST } from '@/utils/Constants';
 import { onRead } from '@/utils/localStorageUtil';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 // NoticeList state
-const noticeList: any = ref([]);
-const searchParams = ref({
+const noticeList: any = reactive([]);
+const searchParams = reactive({
 	order: 'desc',
 	title: '',
 	createName: '',
@@ -83,10 +81,7 @@ const searchParams = ref({
 // Methods
 const onChangeSelectEvent = (event: Event) => {
 	const target = event.target as HTMLSelectElement;
-	searchParams.value = {
-		...searchParams.value,
-		order: target.value,
-	};
+	searchParams.order = target.value;
 	console.log('event', target.value);
 };
 
@@ -95,10 +90,7 @@ const onChangeInputEvent = (event: Event) => {
 	const name = target.name;
 	const value = target.value;
 
-	searchParams.value = {
-		...searchParams.value,
-		[name]: value,
-	};
+	searchParams[name] = value;
 };
 
 const selectIconInfo = (typeId: number) => {
@@ -124,13 +116,13 @@ const navigateToRegist = () => {
 watch(
 	searchParams,
 	() => {
-		noticeList.value = onRead(searchParams.value);
+		Object.assign(noticeList, onRead(searchParams));
 	},
 	{ deep: true },
 );
 
 // Lifecycle
 onMounted(() => {
-	noticeList.value = onRead(searchParams.value);
+	Object.assign(noticeList, onRead(searchParams));
 });
 </script>

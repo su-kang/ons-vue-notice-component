@@ -1,16 +1,14 @@
 <template>
 	<div>
 		<!-- Header Component -->
-		<header class="Header">
-			<!-- Button Component -->
-			<div class="header_left">
+		<Header title="게시판 수정">
+			<template #left>
 				<button class="btn btn-blue" @click="goBack">← 뒤로 가기</button>
-			</div>
-			<div class="header_center">게시판 수정</div>
-			<div class="header_right">
+			</template>
+			<template #right>
 				<button class="btn btn-red" @click="onClickDelete">삭 제</button>
-			</div>
-		</header>
+			</template>
+		</Header>
 
 		<!-- NoticeRegist Component -->
 		<div class="regist">
@@ -66,17 +64,18 @@
 </template>
 
 <script setup lang="ts">
+import Header from '@/components/Header.vue';
 import { ICON_LIST } from '@/utils/Constants';
 import { onDelete, onReadOne, onUpdate } from '@/utils/localStorageUtil';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
 
 // State
-const noticeData = ref({});
-const input = ref({
+const noticeData = reactive({});
+const input = reactive({
 	typeId: 1,
 	title: '',
 	createName: '',
@@ -87,16 +86,13 @@ const input = ref({
 
 // Methods
 const onClickItem = (item: any) => {
-	input.value = {
-		...input.value,
-		typeId: item.id,
-	};
+	input.typeId = item.id;
 };
 
 const onSubmit = () => {
 	// 수정 로직 (localStorage에 저장)
-	onUpdate(input.value);
-	console.log('수정 데이터:', input.value);
+	onUpdate(input);
+	console.log('수정 데이터:', input);
 
 	// 수정 후 리스트 페이지로 이동
 	router.push('/');
@@ -119,10 +115,7 @@ watch(
 	noticeData,
 	newData => {
 		if (newData && Object.keys(newData).length > 0) {
-			input.value = {
-				...input.value,
-				...newData,
-			};
+			Object.assign(input, newData);
 		}
 	},
 	{ deep: true },
@@ -131,6 +124,6 @@ watch(
 // Lifecycle
 onMounted(() => {
 	const id = route.params.id;
-	noticeData.value = onReadOne(id);
+	Object.assign(noticeData, onReadOne(id));
 });
 </script>

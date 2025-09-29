@@ -1,17 +1,14 @@
 <template>
 	<div>
 		<!-- Header Component -->
-		<header class="Header">
-			<!-- Button Component -->
-			<div class="header_left">
+		<Header :title="`[ ${noticeData.title} ] 상세`">
+			<template #left>
 				<button class="btn btn-blue" @click="goBack">← 뒤로 가기</button>
-			</div>
-			<div class="header_center">[ {{ noticeData.title }} ] 상세</div>
-			<!-- Button Component -->
-			<div class="header_right">
+			</template>
+			<template #right>
 				<button class="btn btn-blue" @click="onClickUpdate">수정하기</button>
-			</div>
-		</header>
+			</template>
+		</Header>
 
 		<!-- NoticeDetail Component -->
 		<div class="detail">
@@ -61,16 +58,17 @@
 </template>
 
 <script setup lang="ts">
+import Header from '@/components/Header.vue';
 import { ICON_LIST } from '@/utils/Constants';
 import { onReadOne } from '@/utils/localStorageUtil';
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
 
 // State
-const noticeData: any = ref({});
+const noticeData: any = reactive({});
 
 // Methods
 const selectIconInfo = (id: number) => {
@@ -92,6 +90,6 @@ const goBack = () => {
 // Lifecycle
 onMounted(() => {
 	const id = route.query.id;
-	noticeData.value = onReadOne(id);
+	Object.assign(noticeData, onReadOne(id));
 });
 </script>
