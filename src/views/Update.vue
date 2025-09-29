@@ -10,53 +10,15 @@
 			</template>
 		</Header>
 
-		<!-- NoticeRegist Component -->
-		<div class="regist">
-			<div class="type">
-				<h4>게시판 종류</h4>
-				<!-- IconItem Component -->
-				<IconItem :selectedTypeId="input.typeId" @clickItem="onClickItem" />
-			</div>
-
-			<div class="title_box">
-				<h4>게시판 정보</h4>
-				<div class="box">
-					<label for="title">제 목</label>
-					<input type="text" id="title" name="title" v-model="input.title" />
-				</div>
-				<div class="box">
-					<label for="createName">작 성 자</label>
-					<input
-						type="text"
-						id="createName"
-						name="createName"
-						v-model="input.createName"
-					/>
-				</div>
-			</div>
-
-			<div class="content_box">
-				<h4>게시판 본문</h4>
-				<textarea
-					id="content"
-					name="content"
-					v-model="input.content"
-					placeholder="본문을 입력해주세요"
-				/>
-			</div>
-
-			<div class="button">
-				<button class="btn btn-blue" @click="goBack">취소</button>
-				<button class="btn btn-green" @click="onSubmit">수정</button>
-			</div>
-		</div>
+		<!-- Update Component -->
+		<UpdateComponent v-model="input" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import Header from '@/components/Header.vue';
-import IconItem from '@/components/IconItem.vue';
-import { onDelete, onReadOne, onUpdate } from '@/utils/localStorageUtil';
+import UpdateComponent from '@/components/UpdateComponent.vue';
+import { onDelete, onReadOne } from '@/utils/localStorageUtil';
 import { onMounted, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -75,18 +37,6 @@ const input = reactive({
 });
 
 // Methods
-const onClickItem = (item: any) => {
-	input.typeId = item.id;
-};
-
-const onSubmit = () => {
-	// 수정 로직 (localStorage에 저장)
-	onUpdate(input);
-	console.log('수정 데이터:', input);
-
-	// 수정 후 리스트 페이지로 이동
-	router.push('/');
-};
 
 const onClickDelete = () => {
 	if (confirm('게시글을 삭제하시겠습니까?')) {

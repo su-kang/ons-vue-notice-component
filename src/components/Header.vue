@@ -1,11 +1,11 @@
 <template>
 	<header class="Header">
-		<!-- Button Component -->
+		<!-- Slot left -->
 		<div class="header_left">
 			<slot name="left"></slot>
 		</div>
 		<div class="header_center">{{ title }}</div>
-		<!-- Button Component -->
+		<!-- Slot right -->
 		<div class="header_right">
 			<slot name="right"></slot>
 		</div>
