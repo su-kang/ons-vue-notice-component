@@ -11,7 +11,7 @@
 		</Header>
 
 		<!-- Update Component -->
-		<UpdateComponent v-model="input" />
+		<UpdateComponent v-model="noticeData" />
 	</div>
 </template>
 
@@ -19,15 +19,14 @@
 import Header from '@/components/Header.vue';
 import UpdateComponent from '@/components/UpdateComponent.vue';
 import { onDelete, onReadOne } from '@/utils/localStorageUtil';
-import { onMounted, reactive, watch } from 'vue';
+import { onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
 
 // State
-const noticeData = reactive({});
-const input = reactive({
+const noticeData = reactive({
 	typeId: 1,
 	title: '',
 	createName: '',
@@ -50,20 +49,12 @@ const goBack = () => {
 	router.go(-1);
 };
 
-// Watch for noticeData changes
-watch(
-	noticeData,
-	newData => {
-		if (newData && Object.keys(newData).length > 0) {
-			Object.assign(input, newData);
-		}
-	},
-	{ deep: true },
-);
-
 // Lifecycle
 onMounted(() => {
 	const id = route.params.id;
-	Object.assign(noticeData, onReadOne(id));
+	const data = onReadOne(id);
+	if (data) {
+		Object.assign(noticeData, data);
+	}
 });
 </script>
