@@ -11,18 +11,8 @@
 		<div class="regist">
 			<div class="type">
 				<h4>게시판 종류</h4>
-				<section class="list_wrapper_item">
-					<div
-						v-for="item in ICON_LIST"
-						:key="item.id"
-						class="typeItem"
-						:class="{ selected: item.id === input.typeId }"
-						@click="onClickItem(item)"
-					>
-						<img :src="item.icon" />
-						<span>{{ item.name }}</span>
-					</div>
-				</section>
+				<!-- IconItem Component -->
+				<IconItem :selectedTypeId="input.typeId" @clickItem="onClickItem" />
 			</div>
 
 			<div class="title_box">
@@ -62,7 +52,7 @@
 
 <script setup lang="ts">
 import Header from '@/components/Header.vue';
-import { ICON_LIST } from '@/utils/Constants';
+import IconItem from '@/components/IconItem.vue';
 import { onCreate } from '@/utils/localStorageUtil';
 import { onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
